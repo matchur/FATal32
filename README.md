@@ -1,4 +1,4 @@
-<p align="center">  <img src="imgs/img_1.png" alt="FATALES" width=500/></p>
+<p align="center">  <img src="imgs/img_1.png" alt="FATALES" width=300/></p>
 
 # FATal32
 FATal32 é um sistema interativo em C/C++ para manipulação de imagens FAT32. Ele simula um shell customizado que permite gerenciar arquivos e diretórios diretamente em uma imagem FAT32, com suporte a comandos como ls, cd, cp, mv e outros.
@@ -9,5 +9,6 @@ FATal32 é um sistema interativo em C/C++ para manipulação de imagens FAT32. E
 - **Navegação:** Mude o diretório atual e liste o conteúdo de diretórios.
 - **Interação intuitiva:** Use comandos semelhantes aos encontrados em sistemas Unix/Linux.
 ## Requisitos
-- **Sistema Operacional:** Linux ou Windows com suporte ao GCC.
+- **Sistema Operacional:** Linux.
 - **Compilador:** GCC ou similar.
+<p align="right">  <img src="imgs/icon.png" alt="icon" width=30/></p>
