@@ -3,9 +3,9 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <time.h>
-#include "src/menu/menu.h"
+#include "src/shell/shell.h"
 
 int main ()
 {
-    gerar_menu();
+    start_shell();
 }

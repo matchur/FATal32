@@ -9,13 +9,15 @@ COMMANDS_DIR = $(SRC_DIR)/commands
 MENU_DIR = $(SRC_DIR)/menu
 FAT32_DIR = $(SRC_DIR)/fat32
 UTILS_DIR = $(SRC_DIR)/utils
+SHELL_DIR = $(SRC_DIR)/shell
 
 # Arquivos de origem
 SRC_FILES = main.c \
             $(COMMANDS_DIR)/cmd.c \
             $(MENU_DIR)/menu.c \
             $(FAT32_DIR)/fat32.c \
-            $(UTILS_DIR)/util.c
+            $(UTILS_DIR)/util.c \
+			$(SHELL_DIR)/shell.c
 
 # Arquivos objeto
 OBJ_FILES = $(addprefix $(BUILD_DIR)/, $(SRC_FILES:.c=.o))
