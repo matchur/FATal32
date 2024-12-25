@@ -18,11 +18,10 @@ SRC_FILES = main.c \
             $(UTILS_DIR)/util.c
 
 # Arquivos objeto
-OBJ_FILES = $(SRC_FILES:.c=.o)
-OBJ_FILES = $(OBJ_FILES:%=$(BUILD_DIR)/%)
+OBJ_FILES = $(addprefix $(BUILD_DIR)/, $(SRC_FILES:.c=.o))
 
 # Regra principal
-all: $(BUILD_DIR)/$(EXEC)
+all: $(EXEC)
 
 # Como compilar os arquivos .o a partir dos .c
 $(BUILD_DIR)/%.o: %.c
@@ -30,12 +29,13 @@ $(BUILD_DIR)/%.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Como compilar o executável final
-$(BUILD_DIR)/$(EXEC): $(OBJ_FILES)
-	$(CC) $(CFLAGS) $(OBJ_FILES) -o $@
+$(EXEC): $(OBJ_FILES)
+	$(CC) $(CFLAGS) $(OBJ_FILES) -o $(EXEC)
 
 # Limpeza
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) $(EXEC)
 
 # Recompilar tudo
 rebuild: clean all
+

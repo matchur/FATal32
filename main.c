@@ -3,7 +3,7 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <time.h>
-#include "menu/menu.h"
+#include "src/menu/menu.h"
 
 int main ()
 {

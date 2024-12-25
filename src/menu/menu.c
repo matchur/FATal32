@@ -46,7 +46,7 @@ void print_extra()
 
 void gerar_menu() {
 
-        print_ascii_art()
-        print_opcoes()
+        print_ascii_art();
+        print_opcoes();
 
 }
