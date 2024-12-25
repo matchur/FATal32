@@ -9,14 +9,13 @@ void start_shell() {
     char command[MAX_COMMAND_SIZE];
     int running = 1;
 
-
+    system("clear");
     print_ascii_art();
     printf("Digite 'help' para ver os comandos disponíveis ou 'exit' para sair.\n");
 
     while (running) {
         // Exibir prompt
-        system("clear");
-        gerar_menu();
+        
         printf("fatal32> ");
         fflush(stdout);
 
