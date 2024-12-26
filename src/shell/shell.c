@@ -34,7 +34,9 @@ void ctrl_terminal() {
         sscanf(input, "%s %s %s", command, arg1, arg2);
 
         // Verifica qual comando foi digitado e chama a função correspondente
-        if(strcmp(command, "help") == 0) {
+        if(strcmp(command, "clear") == 0) {
+            system("clear"); // limpar tela - limpar ache log?
+        } else if(strcmp(command, "help") == 0) {
             print_opcoes(); // Mostra as opções
         } else if (strcmp(command, "extra") == 0) {
             print_extra(); // Mostra o extra

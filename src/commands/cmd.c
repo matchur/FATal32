@@ -1,16 +1,38 @@
 #include "cmd.h"
+#include "../structs/fat32.h"
+FAT32Partition fat32Partition;
 
 // Exibe informações do disco e da FAT.
 void cmd_info() {
-    // TODO: Implemente a leitura e exibição das informações do sistema FAT32,
-    // incluindo o tamanho do disco, a localização e tamanho da FAT.
-    printf("Exibindo informações do disco e da FAT...\n");
+    fat32_print_info(&fat32Partition);
 }
 
 // Exibe o conteúdo do bloco especificado no formato texto.
 void cmd_cluster(int num) {
-    // TODO: Leia o bloco 'num' e exiba o conteúdo como texto.
-    printf("Exibindo conteúdo do cluster %d...\n", num);
+    // Calcula o tamanho do cluster dinamicamente
+    size_t clusterSize = fat32Partition.bootSector.bytesPerSector * fat32Partition.bootSector.sectorsPerCluster;
+
+    // Aloca memória dinamicamente para o buffer
+    uint8_t *buffer = malloc(clusterSize);
+    if (buffer == NULL) {
+        printf("Erro ao alocar memória para o cluster %d.\n", num);
+        return;
+    }
+
+    // Lê o cluster e verifica se foi bem-sucedido
+    if (fat32_read_cluster(&fat32Partition, num, buffer) == 0) {
+        printf("Conteúdo do cluster %d:\n", num);
+        for (size_t i = 0; i < clusterSize; ++i) {
+            // Exibe caracteres imprimíveis ou '.' para caracteres não imprimíveis
+            printf("%c", (buffer[i] >= 32 && buffer[i] <= 126) ? buffer[i] : '.');
+        }
+        printf("\n");
+    } else {
+        printf("Erro ao ler o cluster %d.\n", num);
+    }
+
+    // Libera a memória alocada
+    free(buffer);
 }
 
 // Exibe o diretório corrente (caminho absoluto).
