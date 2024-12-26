@@ -28,6 +28,9 @@ void print_opcoes() {
     printf("mv <src> <dst>     - Move um arquivo de <src> para <dst>.\n");
     printf("rename <file> <new>- Renomeia <file> para <new>.\n");
     printf("ls                 - Lista arquivos e diretórios do corrente.\n");
+    printf("help               - Abre: Cheat Sheet.\n");
+    printf("extra              - Abre: Extra Sheet.\n");
+    printf("exit               - Sair do programa.\n");
     printf("------------------------------------------------------\n");
 }
 

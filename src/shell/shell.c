@@ -6,24 +6,20 @@
 #define MAX_COMMAND_SIZE 256
 
 void start_shell() {
-
     system("clear");
     print_ascii_art();
     ctrl_terminal();
-
-    
 }
 
 
-
 void ctrl_terminal() {
-    char input[256]; // Buffer para entrada do usuário
+    char input[MAX_COMMAND_SIZE]; // Buffer para entrada do usuário
     char command[32]; // Buffer para o comando
     char arg1[128], arg2[128]; // Buffers para argumentos
     int running = 1; // Flag para manter o terminal rodando
 
     while (running) {
-        printf("fatal32> "); // Prompt do terminal
+        printf("FATal32> "); // Prompt do terminal
         fgets(input, sizeof(input), stdin); // Lê a entrada do usuário
 
         // Remove o caractere de nova linha do final da entrada
@@ -38,7 +34,11 @@ void ctrl_terminal() {
         sscanf(input, "%s %s %s", command, arg1, arg2);
 
         // Verifica qual comando foi digitado e chama a função correspondente
-        if (strcmp(command, "info") == 0) {
+        if(strcmp(command, "help") == 0) {
+            print_opcoes(); // Mostra as opções
+        } else if (strcmp(command, "extra") == 0) {
+            print_extra(); // Mostra o extra
+        } else if (strcmp(command, "info") == 0) {
             cmd_info();
         } else if (strcmp(command, "cluster") == 0) {
             if (arg1[0] != '\0') {
