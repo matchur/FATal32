@@ -9,5 +9,6 @@
 
 
 void start_shell();
+void ctrl_terminal();
 
 #endif // SHELL_H
