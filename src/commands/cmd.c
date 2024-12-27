@@ -1,5 +1,6 @@
 #include "cmd.h"
 #include "../structs/fat32.h"
+#include "../structs/tree.h"
 FAT32Partition fat32Partition;
 
 // Exibe informações do disco e da FAT.
@@ -100,3 +101,4 @@ void cmd_ls() {
     // TODO: Leia e exiba os arquivos e diretórios do diretório atual.
     printf("Listando arquivos e diretórios...\n");
 }
+

@@ -115,3 +115,30 @@ void ctrl_terminal() {
 
     printf("Encerrando FATal32! Bons sonhos!\n");
 }
+
+
+const char* validate_arguments(int argc, char *argv[]) {
+    if (argc == 2) {
+        // Apenas nome da imagem fornecido, assume que está no diretório atual.
+        if (_access(argv[1], 0) == 0) { // Verifica se o arquivo existe
+            return argv[1];
+        } else {
+            fprintf(stderr, "Erro: Arquivo %s não encontrado.\n", argv[1]);
+            return NULL;
+        }
+    } else if (argc == 3 && strcmp(argv[1], "-r") == 0) {
+        // Caminho fornecido com a flag -r.
+        if (access(argv[2], F_OK) != -1) { // Verifica se o arquivo existe.
+            return argv[2];
+        } else {
+            fprintf(stderr, "Erro: O arquivo especificado não existe: %s\n", argv[2]);
+            return NULL;
+        }
+    } else {
+        // Parâmetros inválidos.
+        fprintf(stderr, "Uso: ./fatal32 <imagem_fat32.iso>\n");
+        fprintf(stderr, "     ./fatal32 -r <local_do_arquivo/pasta/imagem_fat32.iso>\n");
+        return NULL;
+    }
+}
+

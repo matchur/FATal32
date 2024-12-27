@@ -4,7 +4,6 @@
 
 #include "../commands/cmd.h"
 #include "../menu/menu.h"
-#include "../fat32/fat32.h"
 #include "../utils/util.h"
 
 
