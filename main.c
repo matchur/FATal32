@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
+    
 
     // Chama o shell com a imagem carregada.
     start_shell(imagePath);
