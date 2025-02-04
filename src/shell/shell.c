@@ -1,14 +1,36 @@
 #include "shell.h"
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 // Definir tamanho máximo de comando
 #define MAX_COMMAND_SIZE 256
 
-void start_shell() {
+// Variável global para armazenar a partição FAT32 montada
+FAT32Partition *root = NULL;
+
+void start_shell(const char *image_path) {
     system("clear");
     print_ascii_art();
+
+    // Monta a imagem FAT32
+    root = malloc(sizeof(FAT32Partition));
+    if (root == NULL) {
+        fprintf(stderr, "ERRO FATAL: Falha ao alocar memória para a partição FAT32.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (mount_fat32(image_path, root) != 0) {
+        fprintf(stderr, "ERRO FATAL: Falha ao montar a imagem FAT32.\n");
+        free(root);
+        exit(EXIT_FAILURE);
+    }
+
     ctrl_terminal();
+    // Desmonta a imagem FAT32 antes de sair
+    unmount_fat32(root);
+    free(root);
+    root = NULL;
 }
 
 
@@ -113,14 +135,14 @@ void ctrl_terminal() {
         }
     }
 
-    printf("Encerrando FATal32! Bons sonhos!\n");
+    printf("Encerrando FATal32!\n");
 }
 
 
 const char* validate_arguments(int argc, char *argv[]) {
     if (argc == 2) {
         // Apenas nome da imagem fornecido, assume que está no diretório atual.
-        if (_access(argv[1], 0) == 0) { // Verifica se o arquivo existe
+        if (access(argv[1], 0) == 0) { // Verifica se o arquivo existe
             return argv[1];
         } else {
             fprintf(stderr, "Erro: Arquivo %s não encontrado.\n", argv[1]);

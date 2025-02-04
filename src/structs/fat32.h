@@ -4,63 +4,52 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define FAT32_ATTR_READ_ONLY  0x01
-#define FAT32_ATTR_HIDDEN     0x02
-#define FAT32_ATTR_SYSTEM     0x04
-#define FAT32_ATTR_VOLUME_ID  0x08
-#define FAT32_ATTR_DIRECTORY  0x10
-#define FAT32_ATTR_ARCHIVE    0x20
-
-// Estrutura para representar o Boot Sector da FAT32
+#pragma pack(push, 1)
 typedef struct {
-    char OEMName[8];           // Nome OEM
-    uint16_t bytesPerSector;   // Bytes por setor
-    uint8_t sectorsPerCluster; // Setores por cluster
-    uint16_t reservedSectors;  // Setores reservados
-    uint8_t numberOfFATs;      // Número de FATs
-    uint32_t totalSectors;     // Total de setores
-    uint32_t FATSize;          // Tamanho da FAT em setores
-    uint32_t rootCluster;      // Cluster raiz
-} FAT32BootSector;
+    uint8_t jumpCode[3];
+    char oemName[8];
+    uint16_t bytesPerSector;
+    uint8_t sectorsPerCluster;
+    uint16_t reservedSectors;
+    uint8_t fatCount;
+    uint16_t rootEntryCount;
+    uint16_t totalSectors16;
+    uint8_t mediaType;
+    uint16_t sectorsPerFat16;
+    uint16_t sectorsPerTrack;
+    uint16_t headCount;
+    uint32_t hiddenSectors;
+    uint32_t totalSectors32;
+    uint32_t sectorsPerFat32;
+    uint16_t extendedFlags;
+    uint16_t fsVersion;
+    uint32_t rootCluster;
+    uint16_t fsInfo;
+    uint16_t backupBootSector;
+    uint8_t reserved[12];
+    uint8_t driveNumber;
+    uint8_t reserved1;
+    uint8_t bootSignature;
+    uint32_t volumeId;
+    char volumeLabel[11];
+    char fsType[8];
+    uint8_t bootCode[420];
+    uint16_t signature;
+} BootSector;
+#pragma pack(pop)
 
 typedef struct {
-    char name[11];              // Nome do arquivo/diretório (8.3 format)
-    uint8_t attributes;         // Atributos (ex: arquivo, diretório, oculto, etc.)
-    uint8_t reserved;           // Reservado para uso futuro
-    uint8_t creationTimeTenth;  // Milissegundos da criação
-    uint16_t creationTime;      // Hora da criação
-    uint16_t creationDate;      // Data da criação
-    uint16_t lastAccessDate;    // Data do último acesso
-    uint16_t firstClusterHigh;  // Parte alta do cluster inicial
-    uint16_t lastWriteTime;     // Hora da última modificação
-    uint16_t lastWriteDate;     // Data da última modificação
-    uint16_t firstClusterLow;   // Parte baixa do cluster inicial
-    uint32_t fileSize;          // Tamanho do arquivo em bytes
-} FAT32DirectoryEntry;
-
-// Estrutura para representar a FAT em si
-typedef struct {
-    uint32_t *entries;         // Entradas da FAT (ex.: ponteiros para clusters)
-    size_t size;               // Tamanho da FAT (em clusters)
-} FAT32Table;
-
-// Estrutura para representar a partição FAT32
-typedef struct {
-    FILE *imageFile;           // Ponteiro para o arquivo de imagem da partição
-    FAT32BootSector bootSector; // Boot Sector
-    FAT32Table fatTable;        // Tabela FAT
+    BootSector bootSector;
+    FILE *image;
+    uint32_t fatStart;
+    uint32_t dataStart;
 } FAT32Partition;
 
-// Funções para inicializar e liberar a partição
-int fat32_load_partition(FAT32Partition *partition, const char *imagePath);
-void fat32_free_partition(FAT32Partition *partition);
-
-// Operações básicas
-int fat32_read_cluster(FAT32Partition *partition, uint32_t cluster, void *buffer);
-int fat32_write_cluster(FAT32Partition *partition, uint32_t cluster, const void *data);
-int fat32_get_next_cluster(FAT32Partition *partition, uint32_t cluster);
-
-// Helpers
-void fat32_print_info(const FAT32Partition *partition);
+FILE* open_fat32_image(const char* image_path);
+int read_boot_sector(FILE* image, BootSector* bootSector);
+int mount_fat32(const char* image_path, FAT32Partition* partition);
+void unmount_fat32(FAT32Partition* partition);
+int fat32_read_cluster(FAT32Partition* partition, int cluster, uint8_t* buffer);
+void fat32_print_info(FAT32Partition* partition);
 
 #endif // FAT32_H

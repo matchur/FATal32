@@ -1,92 +1,78 @@
 #include "fat32.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-// Carrega a partição FAT32 de uma imagem
-int fat32_load_partition(FAT32Partition *partition, const char *imagePath) {
-    partition->imageFile = fopen(imagePath, "rb+");
-    if (!partition->imageFile) {
-        perror("Erro ao abrir imagem FAT32");
+// Função para ler o setor de boot da imagem FAT32
+int read_boot_sector(FILE* image, BootSector* bootSector) {
+    if (fseek(image, 0, SEEK_SET) != 0) {
+        fprintf(stderr, "Erro ao posicionar o ponteiro no início da imagem.\n");
+        return -1;
+    }
+    if (fread(bootSector, sizeof(BootSector), 1, image) != 1) {
+        fprintf(stderr, "Erro ao ler o setor de boot.\n");
+        return -1;
+    }
+    return 0;
+}
+
+int mount_fat32(const char *image_path, FAT32Partition *partition) {
+    FILE *image = fopen(image_path, "rb");
+    if (image == NULL) {
+        fprintf(stderr, "ERRO FATAL: Não foi possível abrir a imagem FAT32.\n");
         return -1;
     }
 
-    // Lê o Boot Sector
-    fseek(partition->imageFile, 0, SEEK_SET);
-    fread(&partition->bootSector, sizeof(FAT32BootSector), 1, partition->imageFile);
-
-    // Calcula o tamanho da FAT e aloca memória
-    partition->fatTable.size = partition->bootSector.FATSize * 512 / sizeof(uint32_t);
-    partition->fatTable.entries = (uint32_t *)malloc(partition->fatTable.size * sizeof(uint32_t));
-    if (!partition->fatTable.entries) {
-        perror("Erro ao alocar memória para a FAT");
-        fclose(partition->imageFile);
+    // Ler o setor de boot
+    if (read_boot_sector(image, &partition->bootSector) != 0) {
+        fprintf(stderr, "ERRO FATAL: Erro ao ler o setor de boot.\n");
+        fclose(image);
         return -1;
     }
 
-    // Lê a FAT
-    fseek(partition->imageFile, partition->bootSector.reservedSectors * 512, SEEK_SET);
-    fread(partition->fatTable.entries, sizeof(uint32_t), partition->fatTable.size, partition->imageFile);
+    // Verificar a assinatura do setor de boot
+    if (partition->bootSector.signature != 0xAA55) {
+        fprintf(stderr, "ERRO FATAL: Assinatura do setor de boot inválida.\n");
+        fclose(image);
+        return -1;
+    }
+
+    // Inicializar outros campos da partição FAT32
+    partition->image = image;
+    partition->fatStart = partition->bootSector.reservedSectors;
+    partition->dataStart = partition->fatStart + (partition->bootSector.fatCount * partition->bootSector.sectorsPerFat32);
 
     return 0;
 }
 
-// Libera recursos da partição
-void fat32_free_partition(FAT32Partition *partition) {
-    if (partition->imageFile) {
-        fclose(partition->imageFile);
-    }
-    if (partition->fatTable.entries) {
-        free(partition->fatTable.entries);
+void unmount_fat32(FAT32Partition *partition) {
+    if (partition->image != NULL) {
+        fclose(partition->image);
+        partition->image = NULL;
     }
 }
 
-// Lê o conteúdo de um cluster
-int fat32_read_cluster(FAT32Partition *partition, uint32_t cluster, void *buffer) {
-    if (cluster < 2 || cluster >= partition->fatTable.size) {
-        fprintf(stderr, "Cluster inválido: %u\n", cluster);
+int fat32_read_cluster(FAT32Partition* partition, int cluster, uint8_t* buffer) {
+    size_t clusterSize = partition->bootSector.bytesPerSector * partition->bootSector.sectorsPerCluster;
+    size_t offset = (partition->bootSector.reservedSectors + partition->bootSector.fatCount * partition->bootSector.sectorsPerFat32) * partition->bootSector.bytesPerSector + (cluster - 2) * clusterSize;
+
+    if (fseek(partition->image, offset, SEEK_SET) != 0) {
         return -1;
     }
 
-    uint32_t clusterOffset = (partition->bootSector.reservedSectors + partition->bootSector.FATSize * partition->bootSector.numberOfFATs) * 512;
-    clusterOffset += (cluster - 2) * partition->bootSector.sectorsPerCluster * partition->bootSector.bytesPerSector;
-
-    fseek(partition->imageFile, clusterOffset, SEEK_SET);
-    fread(buffer, partition->bootSector.bytesPerSector, partition->bootSector.sectorsPerCluster, partition->imageFile);
+    if (fread(buffer, clusterSize, 1, partition->image) != 1) {
+        return -1;
+    }
 
     return 0;
 }
 
-// Escreve dados em um cluster
-int fat32_write_cluster(FAT32Partition *partition, uint32_t cluster, const void *data) {
-    if (cluster < 2 || cluster >= partition->fatTable.size) {
-        fprintf(stderr, "Cluster inválido: %u\n", cluster);
-        return -1;
-    }
-
-    uint32_t clusterOffset = (partition->bootSector.reservedSectors + partition->bootSector.FATSize * partition->bootSector.numberOfFATs) * 512;
-    clusterOffset += (cluster - 2) * partition->bootSector.sectorsPerCluster * partition->bootSector.bytesPerSector;
-
-    fseek(partition->imageFile, clusterOffset, SEEK_SET);
-    fwrite(data, partition->bootSector.bytesPerSector, partition->bootSector.sectorsPerCluster, partition->imageFile);
-
-    return 0;
-}
-
-// Obtém o próximo cluster na cadeia
-int fat32_get_next_cluster(FAT32Partition *partition, uint32_t cluster) {
-    if (cluster >= partition->fatTable.size) {
-        fprintf(stderr, "Cluster fora do limite: %u\n", cluster);
-        return -1;
-    }
-    return partition->fatTable.entries[cluster];
-}
-
-// Exibe informações sobre a partição
-void fat32_print_info(const FAT32Partition *partition) {
-    printf("FAT32 Info:\n");
-    printf("OEM Name: %.8s\n", partition->bootSector.OEMName);
+void fat32_print_info(FAT32Partition* partition) {
+    printf("Informações da partição FAT32:\n");
     printf("Bytes por setor: %u\n", partition->bootSector.bytesPerSector);
     printf("Setores por cluster: %u\n", partition->bootSector.sectorsPerCluster);
-    printf("Total de setores: %u\n", partition->bootSector.totalSectors);
-    printf("Cluster raiz: %u\n", partition->bootSector.rootCluster);
+    printf("Setores reservados: %u\n", partition->bootSector.reservedSectors);
+    printf("Número de FATs: %u\n", partition->bootSector.fatCount);
+    printf("Setores por FAT32: %u\n", partition->bootSector.sectorsPerFat32);
+    printf("Assinatura do setor de boot: 0x%X\n", partition->bootSector.signature);
 }

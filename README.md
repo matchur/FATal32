@@ -11,4 +11,16 @@ FATal32 é um sistema interativo em C/C++ para manipulação de imagens FAT32. E
 ## Requisitos
 - **Sistema Operacional:** Linux.
 - **Compilador:** GCC ou similar.
+
+## Como Executar
+1. Construa o projeto utilizando o Makefile:
+```bash
+make
+```
+2. Execute o programa:
+```bash
+./fatal32
+```
+
 <p align="right">  <img src="imgs/icon.png" alt="icon" width=30/></p>
+
