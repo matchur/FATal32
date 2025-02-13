@@ -8,10 +8,23 @@
 
 // Variável global para armazenar a partição FAT32 montada
 FAT32Partition *root = NULL;
+char absolute_image_path[256];
+char program_path[256];
+char current_path[256];
+
 
 void start_shell(const char *image_path) {
     system("clear");
     print_ascii_art();
+
+    // Armazena o caminho absoluto da imagem
+    realpath(image_path, absolute_image_path);
+
+    // Armazena o caminho do programa
+    if (getcwd(program_path, sizeof(program_path)) == NULL) {
+        fprintf(stderr, "ERRO FATAL: Falha ao obter o caminho do programa.\n");
+        exit(EXIT_FAILURE);
+    }
 
     // Monta a imagem FAT32
     root = malloc(sizeof(FAT32Partition));
@@ -26,7 +39,11 @@ void start_shell(const char *image_path) {
         exit(EXIT_FAILURE);
     }
 
+    // Inicializa o caminho atual como o diretório raiz da imagem
+    strcpy(current_path, "/");
+
     ctrl_terminal();
+
     // Desmonta a imagem FAT32 antes de sair
     unmount_fat32(root);
     free(root);
