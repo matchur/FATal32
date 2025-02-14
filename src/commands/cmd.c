@@ -337,7 +337,7 @@ void cmd_touch(const char *file) {
         return;
     }
 
-    //PAREI AQUI!!!!!!!!!!!!!!!!!!!!!!!!!
+    
 
     free(parentBuffer);
     printf("Arquivo '%s' criado com sucesso.\n", file);
@@ -347,7 +347,7 @@ void cmd_touch(const char *file) {
 void cmd_mkdir(const char *dir) {
     printf("Criando diretório '%s'...\n", dir);
 
-    // 1. Determina o cluster do diretório atual (diretório pai onde será criado o novo diretório).
+    // Determina o cluster do diretório atual (diretório pai onde será criado o novo diretório).
     int parentCluster = 0;
     if (strcmp(current_path, "/") != 0) {
         parentCluster = find_directory_cluster(current_path);
@@ -359,7 +359,7 @@ void cmd_mkdir(const char *dir) {
         parentCluster = root->bootSector.rootCluster;
     }
 
-    // 2. Lê o cluster do diretório pai para inserir a nova entrada.
+    // Lê o cluster do diretório pai para inserir a nova entrada.
     size_t clusterSize = root->bootSector.bytesPerSector * root->bootSector.sectorsPerCluster;
     uint8_t *parentBuffer = malloc(clusterSize);
     if (parentBuffer == NULL) {
@@ -372,7 +372,7 @@ void cmd_mkdir(const char *dir) {
         return;
     }
 
-    // 3. Procura uma entrada livre no diretório pai.
+    // Procura uma entrada livre no diretório pai.
     int freeIndex = -1;
     size_t totalEntries = clusterSize / sizeof(DirectoryEntry);
     for (size_t i = 0; i < totalEntries; i++) {
@@ -388,7 +388,7 @@ void cmd_mkdir(const char *dir) {
         return;
     }
 
-    // 4. Aloca um novo cluster para o novo diretório.
+    // Aloca um novo cluster para o novo diretório.
     int newDirCluster = fat32_allocate_cluster(root);
     if (newDirCluster < 0) {
         printf("Erro: Falha ao alocar um novo cluster para o diretório.\n");
@@ -396,20 +396,18 @@ void cmd_mkdir(const char *dir) {
         return;
     }
 
-    // 5. Preenche a entrada do diretório pai para o novo diretório.
+    // Preenche a entrada do diretório pai para o novo diretório.
     DirectoryEntry *newEntry = (DirectoryEntry *)&parentBuffer[freeIndex * sizeof(DirectoryEntry)];
     char newShort[11];
     format_short_name(dir, newShort);
     memcpy(newEntry->name, newShort, 11);
     newEntry->attributes = ATTR_DIRECTORY;
-    // Em FAT32, o número do cluster é armazenado em dois campos.
+ 
     newEntry->firstClusterHigh = (uint16_t)(newDirCluster >> 16);
     newEntry->firstClusterLow  = (uint16_t)(newDirCluster & 0xFFFF);
-    newEntry->fileSize = 0; // Diretórios têm tamanho 0
+    newEntry->fileSize = 0; // tamanho 0
 
-    // (Opcional) Preencher datas/horários – aqui deixamos zerados ou você pode implementar a obtenção do tempo atual.
-
-    // 6. Escreve o cluster modificado do diretório pai na imagem.
+    // Escreve o cluster modificado do diretório pai na imagem.
     if (fat32_write_cluster(root, parentCluster, parentBuffer) != 0) {
         printf("Erro ao escrever alterações no diretório pai.\n");
         free(parentBuffer);
@@ -417,7 +415,7 @@ void cmd_mkdir(const char *dir) {
     }
     free(parentBuffer);
 
-    // 7. Inicializa o cluster do novo diretório.
+    // Inicializa o cluster do novo diretório.
     uint8_t *newDirBuffer = malloc(clusterSize);
     if (newDirBuffer == NULL) {
         printf("Erro: sem memória para inicializar o novo diretório.\n");
@@ -428,14 +426,14 @@ void cmd_mkdir(const char *dir) {
     // Cria a entrada "." que aponta para o próprio diretório.
     DirectoryEntry dotEntry;
     memset(&dotEntry, 0, sizeof(DirectoryEntry));
-    // O nome curto para "." é "." seguido de espaços.
+    // O nome curto para "." e depois dois espaço "  "
     memcpy(dotEntry.name, ".          ", 11);
     dotEntry.attributes = ATTR_DIRECTORY;
     dotEntry.firstClusterHigh = (uint16_t)(newDirCluster >> 16);
     dotEntry.firstClusterLow  = (uint16_t)(newDirCluster & 0xFFFF);
     dotEntry.fileSize = 0;
 
-    // Cria a entrada ".." que aponta para o diretório pai.
+    // Cria a entrada ".." que é o diretório pai.
     DirectoryEntry dotdotEntry;
     memset(&dotdotEntry, 0, sizeof(DirectoryEntry));
     memcpy(dotdotEntry.name, "..         ", 11);
@@ -448,7 +446,6 @@ void cmd_mkdir(const char *dir) {
     memcpy(newDirBuffer, &dotEntry, sizeof(DirectoryEntry));
     memcpy(newDirBuffer + sizeof(DirectoryEntry), &dotdotEntry, sizeof(DirectoryEntry));
 
-    // 8. Escreve o cluster do novo diretório na imagem.
     if (fat32_write_cluster(root, newDirCluster, newDirBuffer) != 0) {
         printf("Erro ao escrever o novo diretório.\n");
         free(newDirBuffer);
@@ -463,7 +460,7 @@ void cmd_mkdir(const char *dir) {
 void cmd_rm(const char *file) {
     printf("Removendo arquivo '%s'...\n", file);
 
-    // 1. Determina o cluster do diretório atual.
+    // Determina o cluster do diretório atual.
     int cluster = 0;
     if (strcmp(current_path, "/") != 0) {
         cluster = find_directory_cluster(current_path);
@@ -475,7 +472,7 @@ void cmd_rm(const char *file) {
         cluster = root->bootSector.rootCluster;
     }
 
-    // 2. Lê o cluster do diretório atual.
+    // Lê o cluster do diretório atual.
     size_t clusterSize = root->bootSector.bytesPerSector * root->bootSector.sectorsPerCluster;
     uint8_t *buffer = malloc(clusterSize);
     if (buffer == NULL) {
@@ -488,7 +485,7 @@ void cmd_rm(const char *file) {
         return;
     }
 
-    // 3. Procura a entrada do arquivo no diretório.
+    // Procura a entrada do arquivo no diretório.
     DirectoryEntry *entry = (DirectoryEntry *)buffer;
     int found = 0;
     int entryIndex = -1;
@@ -527,13 +524,15 @@ void cmd_rm(const char *file) {
         return;
     }
 
-    // 4. Marca a entrada como deletada (0xE5 no primeiro byte do nome).
+    // Marca a entrada como deletada (0xE5 no primeiro byte do nome).
     entry[entryIndex].name[0] = 0xE5;
 
-    // 5. Libera os clusters associados ao arquivo na FAT.
+    // Libera os clusters associados ao arquivo na FAT.
     uint16_t firstClusterHigh = entry[entryIndex].firstClusterHigh;
     uint16_t firstClusterLow = entry[entryIndex].firstClusterLow;
     uint32_t clusterNumber = (firstClusterHigh << 16) | firstClusterLow;
+
+    
 
     if (clusterNumber != 0) {
         if (fat32_free_cluster_chain(root, clusterNumber) != 0) {
@@ -543,7 +542,7 @@ void cmd_rm(const char *file) {
         }
     }
 
-    // 6. Escreve o cluster modificado de volta no disco.
+    // Escreve o cluster modificado de volta no disco.
     if (fat32_write_cluster(root, cluster, buffer) != 0) {
         printf("Erro ao escrever alterações no diretório.\n");
         free(buffer);
@@ -558,7 +557,7 @@ void cmd_rm(const char *file) {
 void cmd_rmdir(const char *dir) {
     printf("Removendo diretório '%s'...\n", dir);
 
-    // 1. Encontrar o cluster do diretório atual
+    // Encontrar o cluster do diretório atual
     int parentCluster = find_directory_cluster(current_path);
     if (parentCluster < 0) {
         printf("Erro: Diretório atual não encontrado.\n");
@@ -607,7 +606,7 @@ void cmd_rmdir(const char *dir) {
         return;
     }
 
-    // 2. Verificar se o diretório está vazio
+    // Verificar se o diretório está vazio
     if (!is_directory_empty(root, dirCluster)) {
         printf("AVISO: O diretório não está vazio. Deseja excluir recursivamente? (S/N): ");
         char resposta;
@@ -622,11 +621,10 @@ void cmd_rmdir(const char *dir) {
         char basePath[512];
         snprintf(basePath, sizeof(basePath), "%s/%s", current_path, dir);
 
-        // Remover recursivamente
         recursive_delete_dir(root, dirCluster, basePath);
     }
 
-    // 3. Marcar entrada como deletada e atualizar a FAT
+    // Marcar entrada como deletada e atualizar a FAT
     entry[entryIndex].name[0] = 0xE5;
     if (fat32_write_cluster(root, parentCluster, buffer) != 0) {
         printf("Erro ao atualizar diretório pai.\n");
@@ -644,12 +642,12 @@ void cmd_rmdir(const char *dir) {
 void cmd_cp(const char *src, const char *dst) {
     printf("Copiando de '%s' para '%s'...\n", src, dst);
 
-    // Helper: Determina se o caminho é interno (dentro da imagem)
+    // Helper
     int is_internal(const char *path) {
         return strncmp(path, "img/", 4) == 0;
     }
 
-    // Helper: Converte caminho interno para caminho absoluto na imagem (remove 'img/')
+    // Helper
     char* get_absolute_image_path(const char *path) {
         char *absPath = malloc(MAX_PATH_LEN);
         if (!absPath) return NULL;
@@ -663,7 +661,7 @@ void cmd_cp(const char *src, const char *dst) {
         return absPath;
     }
 
-    // Caso 1: Cópia interna → interna (img/path1 → img/path2)
+    // Cópia interna → interna (img/path1 → img/path2)
     if (is_internal(src) && is_internal(dst)) {
         char *srcPath = get_absolute_image_path(src);
         char *dstPath = get_absolute_image_path(dst);
@@ -678,6 +676,10 @@ void cmd_cp(const char *src, const char *dst) {
             free(dstPath);
             dstPath = strdup(newDstPath);
         }
+
+
+            //PAREI AQUI!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
         // Lê arquivo de origem
         uint8_t *data = NULL;
@@ -697,7 +699,7 @@ void cmd_cp(const char *src, const char *dst) {
             free(dstPath);
             free(data);
     }
-    // Caso 2: Cópia externa → interna (sistema → img/path)
+    // Cópia externa → interna (sistema → img/path)
     else if (!is_internal(src) && is_internal(dst)) {
         char *dstPath = get_absolute_image_path(dst);
         
@@ -732,7 +734,7 @@ void cmd_cp(const char *src, const char *dst) {
         free(dstPath);
         free(data);
     }
-    // Caso 3: Cópia interna → externa (img/path → sistema)
+    //Cópia interna → externa (img/path → sistema)
     else if (is_internal(src) && !is_internal(dst)) {
         char *srcPath = get_absolute_image_path(src);
         
@@ -767,15 +769,15 @@ void cmd_cp(const char *src, const char *dst) {
 
 // Move um arquivo de src para dst.
 void cmd_mv(const char *src, const char *dst) {
-    // TODO: Mova o arquivo de 'src' para 'dst'. Trate caminhos locais e da imagem (img/).
-    printf("Movendo arquivo de '%s' para '%s'...\n", src, dst);
+    printf("Função não implementada...\n", src, dst);
+    //Fazer depois de arrumar o cmd_cp
 }
 
 /// Função que renomeia um arquivo ou diretório.
 void cmd_rename(const char *file, const char *newname) {
     printf("Renomeando '%s' para '%s'...\n", file, newname);
 
-    // 1. Determina o cluster do diretório atual.
+    //cluster do diretório atual.
     int cluster;
     if (strcmp(current_path, "/") != 0) {
         cluster = find_directory_cluster(current_path);
@@ -787,7 +789,7 @@ void cmd_rename(const char *file, const char *newname) {
         cluster = root->bootSector.rootCluster;
     }
 
-    // 2. Lê o cluster do diretório atual.
+    //Lê o cluster do diretório atual.
     size_t clusterSize = root->bootSector.bytesPerSector * root->bootSector.sectorsPerCluster;
     uint8_t *buffer = malloc(clusterSize);
     if (!buffer) {
@@ -800,7 +802,7 @@ void cmd_rename(const char *file, const char *newname) {
         return;
     }
 
-    // 3. Procura a entrada cuja versão curta corresponda a 'file'.
+    //Procura a entrada cuja versão curta corresponda a 'file'.
     int found = 0;
     int mainIndex = -1;
     size_t totalEntries = clusterSize / sizeof(DirectoryEntry);
@@ -847,27 +849,27 @@ void cmd_rename(const char *file, const char *newname) {
         return;
     }
 
-    // 4. Atualiza as entradas LFN (caso existam)
+    //Atualiza as entradas LFN (caso existam)
     int updatedLFN = update_lfn_entries(buffer, mainIndex, newname);
     if (updatedLFN < 0) {
         free(buffer);
         return;
     }
 
-    // 5. Atualiza a entrada curta com o novo nome formatado.
+    //Atualiza a entrada curta com o novo nome formatado.
     char newShort[11];
     format_short_name(newname, newShort);
     DirectoryEntry *entry = (DirectoryEntry *)&buffer[mainIndex * sizeof(DirectoryEntry)];
     memcpy(entry->name, newShort, 11);
 
-    // 6. Recalcula o checksum e atualiza-o em todas as entradas LFN atualizadas.
+    //Recalcula o checksum e atualiza-o em todas as entradas LFN atualizadas.
     uint8_t sum = calc_lfn_checksum(newShort);
     for (int i = mainIndex - updatedLFN; i < mainIndex; i++) {
         LFNEntry *lfn = (LFNEntry *)&buffer[i * sizeof(DirectoryEntry)];
         lfn->checksum = sum;
     }
 
-    // 7. Escreve o cluster modificado de volta na imagem.
+    //Escreve o cluster modificado de volta na imagem.
     if (fat32_write_cluster(root, cluster, buffer) != 0) {
         printf("Erro ao escrever o cluster do diretório.\n");
         free(buffer);
@@ -934,11 +936,6 @@ void cmd_ls() {
             // Cria um buffer temporário para os caracteres desta entrada
             char parte[14] = {0};  // máximo 13 caracteres (5+6+2)
             lfn_extract_part(lfn, parte, sizeof(parte));
-            /*  
-             * As entradas LFN vêm em ordem reversa:
-             * A última entrada (com bit 0x40 em order) contém o primeiro pedaço do nome.
-             * Para reconstruir o nome corretamente, devemos PREPENDÊ-lo.
-             */
             size_t lenParte = strlen(parte);
             size_t lenLongName = strlen(longName);
             if (lenParte + lenLongName < sizeof(longName)) {
@@ -948,20 +945,18 @@ void cmd_ls() {
             }
             continue;
         } else {
-            // Quando chegamos aqui, a entrada não é LFN.
-            // Se acumulamos LFN, então essa entrada curta é o "complemento" da LFN
+
             if (acumulandoLFN) {
-                // Use o longName acumulado em vez do nome curto
                 // Converte para minúsculas
                 for (int j = 0; longName[j]; j++) {
                     longName[j] = tolower(longName[j]);
                 }
                 printf("%s\n", longName);
-                // Reseta o buffer LFN
+                // Reset de buffer
                 memset(longName, 0, sizeof(longName));
                 acumulandoLFN = 0;
             } else {
-                // Não há LFN, usar a entrada curta (8.3)
+                // Não tem LFN, use entrada normal (8.3)
                 char name[9] = {0};
                 char ext[4] = {0};
                 memcpy(name, entry->name, 8);
