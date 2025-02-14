@@ -269,7 +269,7 @@ void cmd_cd(const char *path) {
 void cmd_touch(const char *file) {
     printf("Criando arquivo vazio '%s'...\n", file);
 
-    // 1. Determina o cluster do diretório atual (pai onde será inserido o arquivo).
+    // Determinar o cluster do diretório atual
     int parentCluster = 0;
     if (strcmp(current_path, "/") != 0) {
         parentCluster = find_directory_cluster(current_path);
@@ -281,7 +281,7 @@ void cmd_touch(const char *file) {
         parentCluster = root->bootSector.rootCluster;
     }
 
-    // 2. Lê o cluster do diretório atual.
+    // Lê o cluster do diretório atual.
     size_t clusterSize = root->bootSector.bytesPerSector * root->bootSector.sectorsPerCluster;
     uint8_t *parentBuffer = malloc(clusterSize);
     if (parentBuffer == NULL) {
@@ -294,7 +294,7 @@ void cmd_touch(const char *file) {
         return;
     }
 
-    // 3. Procura uma entrada livre no diretório (entrada com nome 0x00 ou 0xE5).
+    // Procura entrada livre no dir (0x00 - 0xE5).
     int freeIndex = -1;
     size_t totalEntries = clusterSize / sizeof(DirectoryEntry);
     for (size_t i = 0; i < totalEntries; i++) {
@@ -310,7 +310,7 @@ void cmd_touch(const char *file) {
         return;
     }
 
-    // 4. Prepara a nova entrada para o arquivo.
+    // Nova entrada para o arquivo.
     DirectoryEntry newEntry;
     memset(&newEntry, 0, sizeof(DirectoryEntry));
 
@@ -327,18 +327,17 @@ void cmd_touch(const char *file) {
     newEntry.firstClusterLow  = 0;
     newEntry.fileSize = 0;
 
-    // (Opcional) Você pode definir os campos de data/hora aqui, se desejar.
-
-    // 5. Insere a nova entrada no slot livre do diretório.
     DirectoryEntry *entryPtr = (DirectoryEntry *)&parentBuffer[freeIndex * sizeof(DirectoryEntry)];
     memcpy(entryPtr, &newEntry, sizeof(DirectoryEntry));
 
-    // 6. Escreve o cluster modificado de volta na imagem.
+    // Escrita no cluster 
     if (fat32_write_cluster(root, parentCluster, parentBuffer) != 0) {
         printf("Erro ao escrever alterações no diretório atual.\n");
         free(parentBuffer);
         return;
     }
+
+    //PAREI AQUI!!!!!!!!!!!!!!!!!!!!!!!!!
 
     free(parentBuffer);
     printf("Arquivo '%s' criado com sucesso.\n", file);
