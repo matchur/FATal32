@@ -1,3 +1,14 @@
+/*  
+===============================================================================  
+Nome do Projeto : FATal32   
+Descrição       : Implementação de funções auxiliares para manipulação do sistema de arquivos FAT32.  
+                 Contém testes, integração com comandos e suporte à estrutura FAT32.  
+Autor          : Matheus V. Costa  
+Data de Criação: 25/12/2024  
+Última Alteração: 14/02/2025  
+===============================================================================   
+*/
+
 #include "utils.h"
 #include <unistd.h>
 

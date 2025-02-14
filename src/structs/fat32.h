@@ -1,3 +1,17 @@
+/*  
+===============================================================================  
+Nome do Projeto : FATal32  
+Descrição       : Este cabeçalho define as estruturas e funções essenciais para a manipulação  
+                  do sistema de arquivos FAT32, incluindo BootSector, DirectoryEntry,  
+                  LFNEntry e FAT32Partition.  
+                  A diretiva `#pragma pack(push, 1)` é usada para definir as estruturas  
+                  corretamente na memória.  
+Autor           : Matheus V. Costa  
+Data de Criação : 25/12/2024  
+Última Alteração: 14/02/2025  
+===============================================================================  
+*/
+
 #ifndef FAT32_H
 #define FAT32_H
 

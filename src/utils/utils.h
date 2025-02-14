@@ -1,3 +1,13 @@
+/*  
+===============================================================================  
+Nome do Projeto : FATal32 
+Descrição       : Cabeçalho do código utils.c
+Autor           : Matheus V. Costa  
+Data de Criação : 25/12/2024  
+Última Alteração: 14/02/2024  
+===============================================================================  
+*/
+
 #ifndef UTILS_H
 #define UTILS_H
 

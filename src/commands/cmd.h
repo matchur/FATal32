@@ -1,3 +1,14 @@
+/*  
+===============================================================================  
+Nome do Projeto : FATal32 
+Descrição       : Esse é o cabeçalho do cmd.c, aqui estão as assinaturas das 
+                  funções.  
+Autor           : Matheus V. Costa  
+Data de Criação : 25/12/2024  
+Última Alteração: 14/02/2024  
+===============================================================================  
+*/
+
 #ifndef CMD_H
 #define CMD_H
 

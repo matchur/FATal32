@@ -1,7 +1,18 @@
+/*  
+===============================================================================  
+Nome do Projeto : FATal32 
+Descrição       : Esse é o código shell.c responsável por gerar realizar a integração
+                  entre as entradas do usuário e os comandos.
+Autor           : Matheus V. Costa  
+Data de Criação : 25/12/2024  
+Última Alteração: 14/02/2024  
+===============================================================================  
+*/
 #include "shell.h"
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+
 
 // Definir tamanho máximo de comando
 #define MAX_COMMAND_SIZE 256

@@ -1,3 +1,16 @@
+/*  
+===============================================================================  
+Nome do Projeto : FATal32   
+Descrição       : Ponto de entrada do programa.  
+                 Este arquivo inicializa o interpretador de comandos para manipulação  
+                 de uma imagem de sistema de arquivos FAT32.  
+                 O usuário deve fornecer o caminho absoluto para a imagem FAT32 como argumento.  
+Autor          : Matheus V. Costa  
+Data de Criação: 25/12/2024  
+Última Alteração: 14/02/2025  
+=============================================================================== 
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "src/shell/shell.h"

@@ -1,3 +1,14 @@
+/*  
+===============================================================================  
+Nome do Projeto : FATal32 
+Descrição       : Esse é o código fat32.c responsável pelas funções básicas do modelo
+                  estrutural FAT32.
+Autor           : Matheus V. Costa  
+Data de Criação : 25/12/2024  
+Última Alteração: 14/02/2024  
+===============================================================================  
+*/
+
 #include "fat32.h"
 #include <stdio.h>
 #include <stdlib.h>

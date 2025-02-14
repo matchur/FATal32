@@ -1,3 +1,16 @@
+/*  
+===============================================================================  
+Nome do Projeto : FATal32 
+Descrição       : Esse é o código cmd.c ele faz as operações utilizando as funções 
+                  e estruturas disponiblizadas na /structs/fat32.h e funções da /utils/utils.h.
+                  Aqui cada comando está em snake case acompanhado do prefixo cmd_, por exemplo o
+                  comando ls, seu nome de função é cmd_ls.                      
+Autor           : Matheus V. Costa  
+Data de Criação : 25/12/2024  
+Última Alteração: 14/02/2024  
+===============================================================================  
+*/
+
 #include "cmd.h"
 #include "../structs/fat32.h"
 #include "../shell/shell.h"

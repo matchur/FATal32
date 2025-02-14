@@ -1,3 +1,12 @@
+/*  
+===============================================================================  
+Nome do Projeto : FATal32 
+Descrição       : Esse é o cabeçalho do shell.c
+Autor           : Matheus V. Costa  
+Data de Criação : 25/12/2024  
+Última Alteração: 14/02/2024  
+===============================================================================  
+*/
 #ifndef SHELL_H
 #define SHELL_H
 

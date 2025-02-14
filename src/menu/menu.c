@@ -1,3 +1,14 @@
+/*  
+===============================================================================  
+Nome do Projeto : FATal32 
+Descrição       : Esse é o código menu.c responsável por gerar as telas gráficas 
+                  para o usuário.
+Autor           : Matheus V. Costa  
+Data de Criação : 25/12/2024  
+Última Alteração: 14/02/2024  
+===============================================================================  
+*/
+
 #include "menu.h"
 
 void print_ascii_art() {

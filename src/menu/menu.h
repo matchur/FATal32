@@ -1,3 +1,13 @@
+/*  
+===============================================================================  
+Nome do Projeto : FATal32 
+Descrição       : Cabeçalho do código menu.c
+Autor           : Matheus V. Costa  
+Data de Criação : 25/12/2024  
+Última Alteração: 14/02/2024  
+===============================================================================  
+*/
+
 #ifndef MENU_H
 #define MENU_H
 
