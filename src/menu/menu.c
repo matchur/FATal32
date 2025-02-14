@@ -13,7 +13,7 @@ void print_ascii_art() {
     printf("                                                                 \n");
 }
 void print_opcoes() {
-    printf("---------------------- Cheat Sheet ----------------------\n");
+    printf("---------------------- Help Sheet ----------------------\n");
     printf("                                                         \n");
     printf("info               - Exibe informações do disco e da FAT.\n");
     printf("cluster <num>      - Exibe o conteúdo do bloco <num> em texto.\n");
@@ -28,7 +28,7 @@ void print_opcoes() {
     printf("mv <src> <dst>     - Move um arquivo de <src> para <dst>.\n");
     printf("rename <file> <new>- Renomeia <file> para <new>.\n");
     printf("ls                 - Lista arquivos e diretórios do corrente.\n");
-    printf("help               - Abre: Cheat Sheet.\n");
+    printf("help               - Abre: Help Sheet.\n");
     printf("extra              - Abre: Extra Sheet.\n");
     printf("exit               - Sair do programa.\n");
     printf("------------------------------------------------------\n");
@@ -36,8 +36,8 @@ void print_opcoes() {
 
 void print_extra()
 {
-    printf("---------------------- Extra Sheet ----------------------\n");
-    printf("- Esse programa salva todo o seu log ao digitar backup. (log_fatal_n.txt)\n");
+    printf("-------------------- Extra Sheet ---------------------\n");
+    printf("------------------------------------------------------\n");
     printf("------------------------------------------------------\n");
     printf("------------------------------------------------------\n");
     printf("------------------------------------------------------\n");
