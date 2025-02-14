@@ -106,7 +106,6 @@ void cmd_attr(const char *path) {
 
 
 // Altera o diretório corrente para o especificado.
-// Altera o diretório corrente para o especificado.
 void cmd_cd(const char *path) {
     // Tratar caminho absoluto (começa com '/')
     if (path[0] == '/') {
@@ -139,7 +138,7 @@ void cmd_cd(const char *path) {
             }
         }
 
-        // Se ainda houver algo no path após os '..', processar
+        // Se ainda houver algo no path após os '..', precisa processsar
         if (*p != '\0') {
             cmd_cd(p);
         }
@@ -153,7 +152,7 @@ void cmd_cd(const char *path) {
         return;
     }
 
-    // Encontrar o cluster do diretório atual
+    // Achar o cluster do diretório atual, talvez fazer isso no FAT32.c
     int current_cluster = root->bootSector.rootCluster;
     if (strcmp(current_path, "/") != 0) {
         char *path_copy = strdup(current_path);
