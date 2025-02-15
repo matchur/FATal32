@@ -4,20 +4,20 @@
 
 # **FATal32** 
 
-FATal32 é um sistema interativo em C/C++ para manipulação de imagens FAT32. Ele simula um shell customizado que permite gerenciar arquivos e diretórios diretamente em uma imagem FAT32, oferecendo suporte a comandos similares aos encontrados em sistemas Unix/Linux, como `ls`, `cd`, `cp`, `mv`, `rm`, entre outros.  
+FATal32 é um sistema interativo em C/C++ para manipulação de imagens FAT32. Ele simula um shell que permite gerenciar arquivos e diretórios diretamente em uma imagem FAT32, oferecendo suporte a comandos similares aos encontrados em sistemas Unix/Linux, como `ls`, `cd`, `rm`, entre outros.  
 
 ## **1. Estruturas da FAT32**  
 O FAT32 (File Allocation Table 32) é um sistema de arquivos amplamente utilizado, caracterizado por uma estrutura organizada em três áreas principais:  
-
-<p align="center">
-  <img src="imgs/Struct_BootSector_FATal32.png" alt="FATALES" width=482/>
-</p>
 
 - **Setor de Boot:** Contém metadados essenciais, como tamanho do cluster, número de setores por FAT e cluster raiz.  
 - **Tabela de Alocação de Arquivos (FAT):** Gerencia a alocação dos clusters e mantém a relação entre arquivos e suas localizações.  
 - **Área de Dados:** Contém os arquivos e diretórios armazenados no sistema FAT32.  
 
 ### **Estruturas principais utilizadas no projeto**  
+
+<p align="center">
+  <img src="imgs/Struct_BootSector_FATal32.png" alt="FATALES" width=482/>
+</p>
 
 1. **Boot Sector** (Setor de Boot)  
    Estrutura responsável por armazenar informações básicas do sistema de arquivos, como tamanho do setor e número de clusters disponíveis.  
@@ -90,7 +90,7 @@ FATal32/
 Na pasta raiz do projeto há um arquivo `myimagefat32.img`. Caso deseje testar, utilize este arquivo passando seu caminho absoluto como argumento ao executar o programa.  
 
 ```bash
-./fatal32 /caminho/absoluto/myimagefat32.img
+./fatal32 meu/caminho/absoluto/myimagefat32.img
 ```
 
 <p align="right">  <img src="imgs/icon.png" alt="icon" width=30/></p>
