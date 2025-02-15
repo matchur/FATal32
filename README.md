@@ -55,18 +55,22 @@ make
 
 Lista de comandos do FATal32 para manipulação de arquivos e diretórios.  
 
-| Comando            | Descrição                                      | Exemplo                              |
-|--------------------|----------------------------------------------|--------------------------------------|
-| `ls`              | Lista os arquivos e diretórios do local atual | `ls`                                |
-| `cd <dir>`        | Entra no diretório especificado               | `cd pasta1`                         |
-| `mkdir <nome>`    | Cria um novo diretório                        | `mkdir documentos`                  |
-| `rmdir <nome>`    | Remove um diretório vazio                     | `rmdir documentos`                  |
-| `touch <arquivo>` | Cria um novo arquivo                          | `touch novo.txt`                    |
-| `rm <arquivo>`    | Remove um arquivo                             | `rm notas.txt`                      |
-| `cp <src> <dest>` | Copia arquivos/diretórios                     | `cp foto.jpg backup/foto.jpg`       |
-| `mv <src> <dest>` | Move arquivos/diretórios                      | `mv documento.txt pasta1/`          |
-| `cat <arquivo>`   | Exibe o conteúdo de um arquivo                | `cat texto.txt`                     |
-| `exit`            | Sai do shell                                  | `exit`                               |
+| Comando                | Descrição                                                   | Exemplo                        |
+|------------------------|-----------------------------------------------------------|--------------------------------|
+| `info`                | Exibe informações do disco e da FAT.                      | `info`                         |
+| `cluster <num>`       | Exibe o conteúdo do bloco `<num>` em texto.               | `cluster 5`                    |
+| `pwd`                 | Exibe o diretório corrente (caminho absoluto).            | `pwd`                          |
+| `cd <path>`           | Altera o diretório corrente para `<path>`.                | `cd pasta1`                    |
+| `touch <file>`        | Cria o arquivo `<file>` vazio.                            | `touch notas.txt`              |
+| `mkdir <dir>`         | Cria o diretório `<dir>` vazio.                           | `mkdir projetos`               |
+| `rm <file>`           | Remove o arquivo `<file>`.                               | `rm relatorio.pdf`             |
+| `rmdir <dir>`         | Remove o diretório `<dir>` se estiver vazio.             | `rmdir documentos`             |
+| `rename <file> <new>` | Renomeia `<file>` para `<new>`.                          | `rename antigo.txt novo.txt`   |
+| `ls`                  | Lista arquivos e diretórios do diretório corrente.       | `ls`                           |
+| `help`                | Abre a Help Sheet.                                       | `help`                         |
+| `extra`               | Abre a Extra Sheet.                                      | `extra`                        |
+| `exit`                | Sai do programa.                                         | `exit`                         |
+
 
 ## **6. Estrutura do Projeto** 
 ```
